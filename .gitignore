@@ -1,0 +1,17 @@
+.env*
+!.env.example
+.vscode
+users/
+diffusers/
+stable-diffusion-v1-4/
+__pycache__
+node_modules
+dist/
+tsconfig.tsbuildinfo
+.DS_STORE
+
+#SSL Certificate copied from /etc
+/etc
+/certs
+
+notes.txt

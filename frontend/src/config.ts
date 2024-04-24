@@ -1,0 +1,5 @@
+export const LOG_LEVEL = process.env.REACT_APP_LOG_LEVEL ?? 'info'
+export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL ?? 'http://localhost:8000'
+export const DISCORD_AUTH_RETURN_HOST = process.env.REACT_APP_DISCORD_AUTH_RETURN_HOST ?? 'dashboard.shinzo.app'
+export const DISCORD_AUTH_RETURN_PROTOCOL = process.env.REACT_APP_DISCORD_AUTH_RETURN_PROTOCOL ?? 'https'
+export const REQUIRE_AUTH = process.env.REACT_APP_REQUIRE_AUTH ?? 'true'
