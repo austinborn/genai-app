@@ -47,6 +47,8 @@ A custom fork of `diffusers` is used for the stable diffusion generator, so foll
 
 ### Deploy SD generator without GPU
 `sudo docker-compose -f compose.no-gpu.yml up -d --build <backend|frontend|sd-generator>...`
-
 ### Configure HA Proxy
 For final setup to a public domain, please follow the steps in [haproxy/README.md](./haproxy/README.md) and modify the URLs as needed for your domain.
+
+## Troubleshooting
+If you have docker containers that restart after your server is restarted, confirm whether HA Proxy is also running still. It's likely that you need to restart the HA Proxy service with `sudo haproxy -D -f haproxy.cfg` before you will be able to access the service from the web.
