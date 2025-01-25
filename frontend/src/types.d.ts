@@ -1,6 +1,7 @@
 import {
   GEN_ACTION_ITEMS,
   GPT3_5TURBO,
+  GPT4O_MINI,
   SD0_4,
   DND_DM
 } from '../const'
@@ -71,13 +72,14 @@ export type UserProfiles = BaseResponse & {
 // GPT
 
 type GPTParams = {
+  type: typeof GPT3_5TURBO | typeof GPT4O_MINI | typeof SD0_4
   prompt: string
   maxChatHistoryLength?: number
   maxChatHistoryChars?: number
 }
 
 export interface GPTItemData extends QueueData {
-  type: typeof GPT3_5TURBO
+  type: typeof GPT3_5TURBO | typeof GPT4O_MINI
   workflowJob: {
     jobUuid: string
     workflowUuid: string
@@ -129,7 +131,7 @@ export type ImageDimOptions = {
 
 // Jobs
 
-export type JobService = typeof GPT3_5TURBO | typeof SD0_4 | 'dnd-dm'
+export type JobService = 'GPT' | typeof SD0_4 | 'dnd-dm'
 
 export type Job = {
   uuid: string
@@ -155,6 +157,7 @@ export type Job = {
   chat?: {
     message: string
     previousMessage: string
+    model: string
   }[]
 }
 
@@ -182,7 +185,7 @@ export type OutputPipe = {
 }
 
 type CompositeJob = {
-  type: typeof GPT3_5TURBO | typeof SD0_4
+  type: typeof GPT3_5TURBO | typeof GPT4O_MINI | typeof SD0_4
   params: GPTParams | SDParams
   postGenJobs?: {
     type: typeof SD0_4 | typeof GEN_ACTION_ITEMS

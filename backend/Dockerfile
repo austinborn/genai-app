@@ -2,7 +2,7 @@ FROM node:lts
 
 WORKDIR /app
 
-RUN curl -f https://get.pnpm.io/v6.32.js | node - add --global pnpm
+RUN npm install -g pnpm
 
 COPY --chown=node:node ["./package.json", "./pnpm-lock.yaml", "./"]
 

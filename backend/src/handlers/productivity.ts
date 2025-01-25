@@ -13,13 +13,13 @@ import {
   updateNoteSchema,
 } from '../schema'
 import { executeTransaction } from '../dbUtils'
-import { GPT3_5TURBO, GEN_ACTION_ITEMS, GEN_ADVICE_TOOLTIPS } from '../const'
+import { GPT4O_MINI, GEN_ACTION_ITEMS, GEN_ADVICE_TOOLTIPS } from '../const'
 import { runCompositeJob } from './compositeJob'
 
 const OUTPUT_PIPE_TAG = '%%OUTPUT_PIPE%%'
 
 type GPTCompositeJob = {
-  type: typeof GPT3_5TURBO
+  type: typeof GPT4O_MINI
   params: { prompt: string }
   postGenJobs: (typeof postGenJobsSchema)[]
 }
@@ -241,7 +241,7 @@ export const generateActionItems: RequestHandler<typeof generateActionItemsSchem
     `${actionItems.map(ai => ai.body ?? "").join("\n")}`
 
   const jobs: GPTCompositeJob[] = [{
-    type: GPT3_5TURBO,
+    type: GPT4O_MINI,
     params: { prompt },
     postGenJobs: [{
       type: GEN_ACTION_ITEMS,
@@ -307,7 +307,7 @@ export const generateAdviceTooltips: RequestHandler<typeof generateAdviceTooltip
 
   //@ts-expect-error for some reason params is type {}
   const genAdviceTooltipJob: GenAdviceTooltipJob = (ai: ActionItem) => ({
-    type: GPT3_5TURBO,
+    type: GPT4O_MINI,
     params: { prompt: prompt(ai.body) },
     postGenJobs: [{
       type: GEN_ADVICE_TOOLTIPS,

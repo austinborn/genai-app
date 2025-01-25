@@ -4,7 +4,7 @@ import { Button, IconButton, ImageList, ImageListItem, ListSubheader, MenuItem, 
 import { AutoMode, ExpandMore } from '@mui/icons-material'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { authCreds, DND_DM, GPT3_5TURBO, MS_IN_DAY, MS_IN_WEEK, MS_IN_YEAR, SD0_4, typeName } from '../utils'
+import { authCreds, DND_DM, GPT3_5TURBO, GPT4O_MINI, MS_IN_DAY, MS_IN_WEEK, MS_IN_YEAR, SD0_4, typeName } from '../utils'
 import { StableDiffusionRequestPanel } from './StableDiffusionRequestPanel'
 import { DNDRequestPanel } from './DNDRequestPanel'
 import { BACKEND_URL } from '../config'
@@ -48,7 +48,7 @@ const DEFAULT_PROMPT = ''
 
 const JOB_FETCH_SIZE = 10
 
-const JOB_SERVICES: JobService[] = [GPT3_5TURBO, SD0_4, DND_DM]
+const JOB_SERVICES: JobService[] = [GPT3_5TURBO, GPT4O_MINI, SD0_4, DND_DM]
 
 const jobServices: { label: string, value: JobService }[] = JOB_SERVICES.map(service => ({
   label: typeName[service],
@@ -107,12 +107,13 @@ const buildRequestDataConfig = (headJobUuid: string) => ({
 })
 
 type GPTRequestPanelParams = {
+  model: typeof GPT3_5TURBO | typeof GPT4O_MINI
   workflowUuid?: string
   pushRequestToQueue: (data?: CompositeJobRequest) => Promise<void>
   repeatJob: Job | null
 }
 
-const GPTRequestPanel = ({ workflowUuid, pushRequestToQueue, repeatJob }: GPTRequestPanelParams) => {
+const GPTRequestPanel = ({ model, workflowUuid, pushRequestToQueue, repeatJob }: GPTRequestPanelParams) => {
   const [userMessage, setUserMessage] = useState<string>(DEFAULT_PROMPT)
 
   useEffect(() => {
@@ -130,8 +131,9 @@ const GPTRequestPanel = ({ workflowUuid, pushRequestToQueue, repeatJob }: GPTReq
           workflowUuid,
           jobs: [
             {
-              type: GPT3_5TURBO,
+              type: model,
               params: {
+                type: model,
                 prompt: userMessage,
                 maxChatHistoryLength: 50,
                 maxChatHistoryChars: 10_000
@@ -231,7 +233,7 @@ const FormattedJob = (
   } else if (j.completionRequestUuid) {
     details = [
       { header: discordUser?.username ?? "", body: j.chat?.[0].previousMessage ?? "", margin: '0' },
-      { header: "GPT", body: j.chat?.[0].message ?? "", color: colorPalette.button }
+      { header: j.chat?.[0].model ?? 'GPT', body: j.chat?.[0].message ?? "", color: colorPalette.button }
     ]
   }
 
@@ -285,7 +287,7 @@ type JobRequestPanelArgs = {
 }
 
 const JobRequestPanel = ({ workflow, shinzoUser, repeatJob }: JobRequestPanelArgs) => {
-  const [jobService, setJobService] = useState<JobService>(GPT3_5TURBO)
+  const [jobService, setJobService] = useState<JobService>(GPT4O_MINI)
 
   useEffect(() => {
     if (repeatJob) setJobService(repeatJob.type)
@@ -302,7 +304,8 @@ const JobRequestPanel = ({ workflow, shinzoUser, repeatJob }: JobRequestPanelArg
         {jobServices.map(j => (<MenuItem value={j.value} key={j.value}>{j.label}</MenuItem>))}
       </Select>
       <div style={requestPanelStyle}>
-        {(jobService === GPT3_5TURBO) && <GPTRequestPanel workflowUuid={workflow?.uuid} repeatJob={repeatJob} pushRequestToQueue={pushCompositeJobRequestToQueue} />}
+        {(jobService === GPT3_5TURBO) && <GPTRequestPanel model={GPT3_5TURBO} workflowUuid={workflow?.uuid} repeatJob={repeatJob} pushRequestToQueue={pushCompositeJobRequestToQueue} />}
+        {(jobService === GPT4O_MINI) && <GPTRequestPanel model={GPT4O_MINI} workflowUuid={workflow?.uuid} repeatJob={repeatJob} pushRequestToQueue={pushCompositeJobRequestToQueue} />}
         {(jobService === SD0_4) && <StableDiffusionRequestPanel workflowUuid={workflow?.uuid} shinzoUser={shinzoUser} repeatJob={repeatJob} pushingRequestToQueue={pushingCompositeJobRequestToQueue} pushRequestToQueue={pushCompositeJobRequestToQueue} />}
         {(jobService === DND_DM) && <DNDRequestPanel workflowUuid={workflow?.uuid} shinzoUser={shinzoUser} pushRequestToQueue={pushCompositeJobRequestToQueue} />}
       </div>

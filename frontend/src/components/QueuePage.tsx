@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { usePostBackend } from '../hooks/queryBackend'
 import { Button, Card, Typography } from '@mui/material'
-import { authCreds, MS_PER_S, GPT3_5TURBO, SD0_4, secondsToReadableString, typeName } from '../utils'
+import { authCreds, MS_PER_S, GPT3_5TURBO, GPT4O_MINI, SD0_4, secondsToReadableString, typeName } from '../utils'
 import {
   buttonStyle,
   cardStyle,
@@ -150,7 +150,7 @@ const QueueItem = ({
           //@ts-expect-error
           <SDItem data={item.data} idx={idx} />
         }
-        {(item.data.type === GPT3_5TURBO) &&
+        {([GPT3_5TURBO, GPT4O_MINI].includes(item.data.type)) &&
           //@ts-expect-error
           <GPTItem data={item.data} idx={idx} />}
         {/* <TimedProgressBar totalSeconds={totalSecs} barSteps={totalSecs} /> */}

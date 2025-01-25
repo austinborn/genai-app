@@ -172,9 +172,8 @@ export const listJobs: RequestHandler<typeof listJobsSchema, { rows: JobWithData
     }
 
     if (j.completion_request_uuid) { //TODO figure out how to be able to return latest user message when completion request isn't present yet?
-      jobWithData.type = GPT3_5TURBO
       const [messagePaths] = await dbClient.query(`\
-        select m.uuid as message_uuid, f.path as text_path, pf.path as previous_text_path \
+        select m.uuid as message_uuid, f.path as text_path, pf.path as previous_text_path, cr.model as model \
         from gpt.completion_request cr \
         join gpt.message pm on pm.uuid = cr.previous_message_uuid \
         left join gpt.message m on m.completion_request_uuid = cr.uuid \
@@ -182,10 +181,11 @@ export const listJobs: RequestHandler<typeof listJobsSchema, { rows: JobWithData
         left join main.file f on f.uuid = m.text_uuid \
         where cr.uuid = '${j.completion_request_uuid}' \
         order by m.completion_index asc \
-      `) as { message_uuid: string, text_path: string, previous_text_path: string }[][]
+      `) as { message_uuid: string, text_path: string, previous_text_path: string, model: string }[][]
 
       jobWithData.chat = messagePaths.map(m => {
-        const chat: Chat = { previousMessage: readFileSyncRelative(m.previous_text_path).toString() }
+        const chat: Chat = { previousMessage: readFileSyncRelative(m.previous_text_path).toString(), model: m.model }
+        jobWithData.type = m.model
         if (existsSyncRelative(m.text_path)) chat.message = readFileSyncRelative(m.text_path).toString()
         return chat
       })

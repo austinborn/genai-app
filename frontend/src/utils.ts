@@ -1,11 +1,13 @@
 import {RequestWithAuth, JobService } from './types'
 
 export const GPT3_5TURBO = 'gpt-3.5-turbo'
+export const GPT4O_MINI = 'gpt-4o-mini'
 export const SD0_4 = 'sd-0.4'
 export const DND_DM = 'dnd-dm'
 
 export const typeName: Record<JobService, string>= {
   [SD0_4]: 'Stable Diffusion v0.4',
+  [GPT4O_MINI]: 'GPT 4o Mini',
   [GPT3_5TURBO]: 'GPT 3.5-Turbo',
   [DND_DM]: 'Dungeons & Dragons DM'
 }

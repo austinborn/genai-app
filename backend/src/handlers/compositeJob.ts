@@ -1,6 +1,6 @@
 import { Workflow } from '../models'
 import { GPTItemData, RequestHandler, Response, SDItemData, ServiceItemData } from '../types'
-import { GPT3_5TURBO, SD0_4 } from '../const'
+import { GPT3_5TURBO, GPT4O_MINI, SD0_4 } from '../const'
 import { generateMessage } from './gpt'
 import { generateImages } from './stableDiffusion'
 import {
@@ -12,6 +12,7 @@ import {
 
 const jobCallbacks = {
   [GPT3_5TURBO]: generateMessage,
+  [GPT4O_MINI]: generateMessage,
   [SD0_4]: generateImages
 }
 
@@ -55,7 +56,7 @@ export const runCompositeJob: RequestHandler<typeof runCompositeJobSchema, Servi
 
     const callback = jobCallbacks[job.type]
 
-    if (job.type === GPT3_5TURBO) {
+    if ([GPT3_5TURBO, GPT4O_MINI].includes(job.type)) {
       //@ts-expect-error for some reason params is type {}
       request.job.params.jobDependencies = [...gptDependencies]
     }
@@ -64,7 +65,7 @@ export const runCompositeJob: RequestHandler<typeof runCompositeJobSchema, Servi
     const { response, status, error } = await callback(user, request)
 
     if (error || typeof response === 'string') return { response: `Error when running job idx ${idx}: ${response}`, status, error: true }
-    else if (job.type === GPT3_5TURBO) {
+    else if ([GPT3_5TURBO, GPT4O_MINI].includes(job.type)) {
       gptDependencies.push(response.workflowJob.jobUuid)
     }
 

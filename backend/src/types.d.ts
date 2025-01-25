@@ -1,7 +1,7 @@
 import { ActionItem, Batch, CompletionRequest, File, Job, Message, Note, User, Workflow } from "./models"
 import { FastifyReply } from 'fastify'
 
-import { GPT3_5TURBO, SD0_4 } from "./const"
+import { GPT3_5TURBO, GPT4O_MINI, SD0_4 } from "./const"
 
 import * as yup from 'yup'
 
@@ -87,9 +87,11 @@ export type MessageWithTextPath = Message & { text_path?: string }
 export type Chat = {
   message?: string
   previousMessage: string
+  model: string
 }
 
 type GPTParams = {
+  type: string
   prompt: string
   maxChatHistoryLength?: number
   maxChatHistoryChars?: number
@@ -348,7 +350,7 @@ export type RequestMiddlewareOptions = {
 
 export type RequestData = {
   moreToProcess: boolean
-  type: typeof GPT3_5TURBO | typeof SD0_4
+  type: typeof GPT3_5TURBO | typeof GPT4O_MINI | typeof SD0_4
   userUuid: User["uuid"]
   workflowJob: WorkflowJob
 }

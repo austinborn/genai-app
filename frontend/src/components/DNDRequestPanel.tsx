@@ -56,12 +56,14 @@ export const DNDRequestPanel = ({ workflowUuid, shinzoUser, pushRequestToQueue }
             {
               type: GPT3_5TURBO,
               params: {
+                type: GPT3_5TURBO,
                 prompt: "Generate a Dungeons and Dragons campaign session with the following session outline: " + outline
               }
             },
             {
               type: GPT3_5TURBO,
               params: {
+                type: GPT3_5TURBO,
                 prompt: listElementUserMessage("characters"),
               },
               postGenJobs: [
@@ -84,6 +86,7 @@ export const DNDRequestPanel = ({ workflowUuid, shinzoUser, pushRequestToQueue }
             {
               type: GPT3_5TURBO,
               params: {
+                type: GPT3_5TURBO,
                 prompt: listElementUserMessage("locations"),
               },
               postGenJobs: [
@@ -106,6 +109,7 @@ export const DNDRequestPanel = ({ workflowUuid, shinzoUser, pushRequestToQueue }
             {
               type: GPT3_5TURBO,
               params: {
+                type: GPT3_5TURBO,
                 prompt: listElementUserMessage("enemies"),
               },
               postGenJobs: [

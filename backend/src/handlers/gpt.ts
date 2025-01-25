@@ -5,9 +5,6 @@ import axios, { AxiosResponse } from 'axios'
 import { existsSyncRelative, getTextPath, readFileSyncRelative, sleep, writeFileRelative } from '../utils'
 import { CompletionRequest, File, LatestMessage, Message, User, Workflow } from '../models'
 import { CompletionResponse, FormatMessages, GPTItemData, MessageWithTextPath, RequestHandler, RequestProcessor, GPTMessage } from '../types'
-import {
-  GPT3_5TURBO
-} from '../const'
 import { createWorkflowJob, executeTransaction } from '../dbUtils'
 import { pushRequest } from './jobQueue'
 import { dbClient } from '../dbClient'
@@ -18,7 +15,6 @@ import { rateLimitedRequest } from '../authorizations/modelAuth'
 const DEFAULT_TEMPERATURE = 1
 const DEFAULT_TOP_P = 1
 const DEFAULT_NUM_COMPLETIONS = 1
-const DEFAULT_COMPLETION_MODEL = GPT3_5TURBO // See https://platform.openai.com/docs/models/model-endpoint-compatibility
 
 let mockGPTNumber = 0
 
@@ -166,6 +162,7 @@ const formatMessages: FormatMessages = (messages: MessageWithTextPath[], maxChat
 const gptCompletionRequest = async (
   userUuid: User["uuid"],
   workflowJob: GPTItemData["workflowJob"],
+  type: string,
   messages: MessageWithTextPath[],
   maxChatHistoryLength?: number,
   maxChatHistoryChars?: number
@@ -175,7 +172,7 @@ const gptCompletionRequest = async (
   const formattedMessages = formatMessages(messages, maxChatHistoryChars)
 
   const completionRequest = await CompletionRequest.create({
-    model: DEFAULT_COMPLETION_MODEL,
+    model: type,
     temperature: DEFAULT_TEMPERATURE,
     top_p: DEFAULT_TOP_P,
     completions: DEFAULT_NUM_COMPLETIONS,
@@ -186,7 +183,7 @@ const gptCompletionRequest = async (
   })
 
   const gptRequestData = {
-    model: DEFAULT_COMPLETION_MODEL,
+    model: type,
     messages: formattedMessages,
     temperature: DEFAULT_TEMPERATURE,
     top_p: DEFAULT_TOP_P,
@@ -232,6 +229,7 @@ export const generateMessage: RequestHandler<typeof generateMessageSchema, GPTIt
 
   const {
     prompt,
+    type,
     maxChatHistoryLength,
     maxChatHistoryChars,
     jobDependencies
@@ -248,7 +246,7 @@ export const generateMessage: RequestHandler<typeof generateMessageSchema, GPTIt
 
     const messages = await listAllMessages(userMessage.uuid, maxChatHistoryLength)
 
-    const responseMessageUuid = await gptCompletionRequest(user.uuid, workflowJob, messages, maxChatHistoryLength, maxChatHistoryChars)
+    const responseMessageUuid = await gptCompletionRequest(user.uuid, workflowJob, type, messages, maxChatHistoryLength, maxChatHistoryChars)
 
     if (!responseMessageUuid) logger.error("No response message UUID from completion request handler")
 
@@ -260,7 +258,7 @@ export const generateMessage: RequestHandler<typeof generateMessageSchema, GPTIt
   const itemData: GPTItemData = {
     workflowJob,
     prompt,
-    type: GPT3_5TURBO,
+    type,
     moreToProcess: true,
     userUuid: user.uuid
   }
@@ -271,7 +269,7 @@ export const generateMessage: RequestHandler<typeof generateMessageSchema, GPTIt
     {
       data: itemData,
       isBlocked: async () => {
-        const msUntilNextAllow = rateLimitedRequest(GPT3_5TURBO)
+        const msUntilNextAllow = rateLimitedRequest(type)
         return { blocked: msUntilNextAllow > 0 }
       },
       processor,

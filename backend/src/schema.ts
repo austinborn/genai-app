@@ -2,6 +2,7 @@ import {
   GEN_ACTION_ITEMS,
   GEN_ADVICE_TOOLTIPS,
   GPT3_5TURBO,
+  GPT4O_MINI,
   SD0_4,
   SSO_PROVIDERS
 } from './const'
@@ -79,6 +80,7 @@ export const postGenJobsSchema = yup.array(yup.object({
 
 export const gpt35TurboSchema = yup.object({
   prompt: yup.string().required(),
+  type: yup.string().oneOf([GPT3_5TURBO, GPT4O_MINI]).required(),
   maxChatHistoryLength: yup.number().integer().positive(),
   maxChatHistoryChars: yup.number().integer().positive(),
   jobDependencies: yup.array(yup.string().required())
@@ -87,6 +89,7 @@ export const gpt35TurboSchema = yup.object({
 export const generateMessageSchema = yup.object({
   workflowUuid: yup.string().required(),
   job: yup.object({
+    type: yup.string().oneOf([GPT3_5TURBO, GPT4O_MINI]).required(),
     params: gpt35TurboSchema.required(),
     postGenJobs: postGenJobsSchema
   }).required()
@@ -95,10 +98,10 @@ export const generateMessageSchema = yup.object({
 // Composite Jobs
 
 const jobSchema = yup.array(yup.object({
-  type: yup.string().oneOf([GPT3_5TURBO, SD0_4]).required(),
+  type: yup.string().oneOf([GPT3_5TURBO, GPT4O_MINI, SD0_4]).required(),
   params: yup.object().when(
     'type',
-    ([type]) => type === GPT3_5TURBO ? gpt35TurboSchema : sd04Schema
+    ([type]) => [GPT3_5TURBO, GPT4O_MINI].includes(type) ? gpt35TurboSchema : sd04Schema
   ),
   postGenJobs: postGenJobsSchema
 })).required().min(1)
