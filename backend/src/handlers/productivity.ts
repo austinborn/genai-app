@@ -265,6 +265,7 @@ export const generateActionItems: RequestHandler<typeof generateActionItemsSchem
     }]
   }]
 
+  //@ts-expect-error for some reason params is type {}
   const compositeJobResponse = await runCompositeJob(user, { jobs })
 
   const { response } = compositeJobResponse
@@ -304,6 +305,7 @@ export const generateAdviceTooltips: RequestHandler<typeof generateAdviceTooltip
     `"${body ?? ""}"\n\n` +
     "Offer 1 or 2 sentences of specific advice about how to accomplish the task"
 
+  //@ts-expect-error for some reason params is type {}
   const genAdviceTooltipJob: GenAdviceTooltipJob = (ai: ActionItem) => ({
     type: GPT4O_MINI,
     params: { prompt: prompt(ai.body), type: GPT4O_MINI },
@@ -332,6 +334,7 @@ export const generateAdviceTooltips: RequestHandler<typeof generateAdviceTooltip
 
   const responses: string[] = []
   for (const job of jobs) {
+    //@ts-expect-error for some reason params is type {}
     const { response } = await runCompositeJob(user, { jobs: [job] })
     if (typeof response === 'string') responses.push(response)
     else {
