@@ -1,9 +1,9 @@
 # GenAI Content Management App
 The GenAI Content Management App is an integrated web application to query genAI models like GPT and Stable Diffusion and manage the multi-modal generated content. This application can be deployed locally in a single command with proper configuration and setup. The code is provided as-is with no guarantees about functionality or future support.
 
-<img height="400" alt="Zombie Halloween Party" src="https://github.com/shinzo-labs/shinzo/assets/15525028/2f43d670-5c71-4793-a285-b7e2c142f4a3">
-<img height="400" alt="Voxel Mansion" src="https://github.com/shinzo-labs/shinzo/assets/15525028/27163eac-5467-42da-b622-d403ee525e9f">
-<img width="984" alt="Business Questions" src="https://github.com/shinzo-labs/shinzo/assets/15525028/e5961c97-a108-4ae0-a22c-cdc9f5469c78">
+<img height="400" alt="Zombie Halloween Party" src="https://github.com/austinborn/genai-app/assets/15525028/2f43d670-5c71-4793-a285-b7e2c142f4a3">
+<img height="400" alt="Voxel Mansion" src="https://github.com/austinborn/genai-app/assets/15525028/27163eac-5467-42da-b622-d403ee525e9f">
+<img width="984" alt="Business Questions" src="https://github.com/austinborn/genai-app/assets/15525028/e5961c97-a108-4ae0-a22c-cdc9f5469c78">
 
 
 ## Prerequisites
