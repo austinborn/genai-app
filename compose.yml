@@ -18,6 +18,7 @@ services:
     volumes:
       - users:/users
       - stable-diffusion-v1-4:/stable-diffusion-v1-4
+      - diffusers:/diffusers
     restart: always
 
   backend:
@@ -53,3 +54,9 @@ volumes:
       o: bind
       type: none
       device: ${PWD}/../stable-diffusion-v1-4
+  diffusers:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/../diffusers
