@@ -50,3 +50,13 @@ A custom fork of `diffusers` is used for the stable diffusion generator, so foll
 ### Configure HA Proxy
 For final setup to a public domain, please follow the steps in [haproxy/README.md](./haproxy/README.md) and modify the URLs as needed for your domain.
 
+### Troubleshooting
+If the docker compose fails to start, try the following:
+- If you are using `sudo`, ensure you use `sudo -E` to keep env vars like `PWD`.
+- Ensure `pnpm` is up-to-date and all packages are on reasonable versions, or upgraded with:
+```bash
+pnpm up --latest
+```
+- If the backend fails to connect to the DB with some error about `ECONNREFUSED`, make sure the DB URL uses 172.17.0.1 instead of localhost. This is a quirk with docker's network configuration.
+
+
